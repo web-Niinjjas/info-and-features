@@ -12,7 +12,7 @@ docs: https://redux-toolkit.js.org/introduction/getting-started
 
 # APIs
 
-##React.memo
+- **React.memo**
 
 ```jsx
 const ComponentWithMemo = () => React.memo(Component)
