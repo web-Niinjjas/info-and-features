@@ -1,0 +1,113 @@
+# React notes
+
+Links:
+
+https://react.dev/reference/react
+
+создать приложение по шаблону vite+react+ts+reduxtoolkit
+
+`npx degit reduxjs/redux-templates/packages/vite-template-redux my-app`
+
+docs: https://redux-toolkit.js.org/introduction/getting-started
+
+# APIs
+
+##React.memo
+
+```jsx
+const ComponentWithMemo = () => React.memo(Component)
+```
+
+Используется для прерывания цепочки рендеров.
+
+Компонент с мемоизацией будет перерендериваться только когда изменились пропсы
+
+и не будет перерендериваться при рендере родителя.
+
+Имеет смысл только если Компонент имеет мало пропсов или ини редко меняются.
+
+При этом важно не забыть обернуть передаваемые в пропсах функции в коллБэк
+
+- **Raect.lazy**
+
+Ленивая загрузка. При использовании позволяет начать загрузку компонента только при непосредственном вызове, а не при запуске приложения.
+
+Позволяет существенно сократить время первого запуска.
+
+```jsx
+import { lazy } from "react";
+export const MenuAsync = lazy(() => import("./Menu"));
+```
+
+- **useContext()**
+
+Что бы избежать пропс дриллинга, при передаче пропсов более чем на 2 сля более разумно использовать контекст.
+
+Значения необходимые на вложенных уровнях передаются путем обертывания компонентов в роутер.
+
+Изменения значения, вызывает перерендер как и в случае со стейтом или пропс.
+
+```jsx
+// создание:
+import { createContext } from 'react';
+const ThemeContext = createContext( defaultValue || null );
+
+//передача:
+function App() {
+const [theme, setTheme] = useState('light');
+// ...
+
+return (
+<ThemeContext.Provider value={theme}>
+	<Page />
+</ThemeContext.Provider>);}
+
+// использование:
+function Button() {
+const theme = useContext(ThemeContext);
+return <button className={theme} />;}
+```
+
+## **ХУКИ**
+
+- **useState()**
+- **useEffect()**
+- **useLayoutEffect()**
+- **useId()**
+- **useRef()**
+- **useTransition()**
+
+Бывает что при нажатии на кнопку мы загружаем тяжелый компонент и все блокируется пока он не загрузиться.
+
+Позволяет не блокировать интерфейс при загрузке страницы.
+
+```jsx
+const  [ isPending, startTransition ] = useTransition()
+onClick={() => startTransition ( () => { () => setState(!state) } )}
+{ isPanding && <span> ... Загрузка </span>}
+console.log('develop >>', )
+```
+
+- **useCallback()**
+
+Нужен для того что бы при каждом перендере, не создавалась новая ссылка на функцию
+
+и если функция передается в пропсах, это не вызывало рендеров мемоизированых компонентов.
+
+- **useMemo()**
+
+Что не проводить при каждом рендере тяжелые расчеты, которые потом мы помещаем в переменную,
+
+следует использовать мемоизацию. Но сама по себе мемоизация тоже имеет вес, по-этому 2+2 мемоизировать не стоит. Нужен баланс.
+
+```jsx
+import { useMemo } from 'react';
+function TodoList({ todos, tab }) {
+const visibleTodos = useMemo(() => filterTodos(todos, tab),[todos, tab]);}
+```
+
+## **КОМПОНЕНТЫ**
+
+- **<Suspense>**
+
+позволяет отображать резервный вариант до тех пор, пока его дочерние элементы не завершат загрузку.
